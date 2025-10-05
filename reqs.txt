@@ -1,0 +1,63 @@
+// Todo App
+
+// Requirements:
+
+TodoApp function
+// - Create multiple or single instance of a Todo App
+// - Each Todo app must be able to:
+// - Create new task
+// - Toggle task from done to incomplete
+// - Delete tasks
+// - Update tasks
+// - Read tasks
+// Task CRUD
+// - Entities:
+//  - TodoApp
+//  - Task => Schema { title, status [done|incomplete], id, [dueDate, priority] }
+
+
+
+
+//YLOPOIHSH
+
+//function Task(){
+  // Own properties: id, title, status
+//}
+// Public properties
+// Task.prototype.delete?
+// Task.prototype.patchTask = ...
+
+//TodoApp.taskCounter= 0;
+// Public properties
+// TodoApp.prototype.getTasks = ...
+// TodoApp.prototype.addTask
+// TodoApp.prototype.getTaskById
+// TodoApp.prototype.deleteTaskById
+
+//const todoApp1 = new TodoApp();
+//console.log(todoApp1);
+// CRUD Operations
+//const tasks = todoApp1.getTasks(); // return [], Date? OK
+// View tasks
+// What about todoApp1.getTasksCount()? OK
+// const task1 = todoApp1.addTask({ title: "Learn JS", status: "incomplete"}); // C OK
+// ids must be automatically added from the constructor? Incremental id (counter)? 
+// const t1 = todoApp1.getTaskById(1); // R OK
+// task1.patchTask({ status: "done" }); // U OK
+// task1.delete(); // D
+
+
+
+
+TODO 4/10
+1) In getTaskInfoById() and changeTaskStatus() and removeTaskbyID() replace the for loops with the .find() method
+2) Make Menu Choice OK
+3) Dates (regex) OK
+4)FIX BUGS (INPUT VALIDATION) (30% OK)
+
+
+TODO 5/10
+1) Implement the Task Count property.
+2) In getTaskInfoById() and changeTaskStatus() and removeTaskbyID() replace the for loops with the .find() method
+3) Fix date validation (find a way to do only dates later than the one you're rn). Either make a good regex (look at regex 101 guides), or try playing with the dates.
+4) FIX BUGS (INPUT VALIDATION)
