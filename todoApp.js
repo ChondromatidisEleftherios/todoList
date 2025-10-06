@@ -1,13 +1,18 @@
 //@ts-check
 ("use strict");
 
-const prompt = require("prompt-sync")(); 
+const prompt = require("prompt-sync")();
 
 function TodoApp() {
   this.taskId = 0;
   this.allTasks = [];
   this.taskCount = function taskCount() {
-    return this.allTasks.length;
+    const totalTasks = this.allTasks.length;
+    if (totalTasks !== 0) {
+      showSuccessMessage();
+      return this.allTasks.length;
+    }
+    throw `Zero values`;
   };
 }
 
@@ -25,76 +30,68 @@ TodoApp.prototype.addTask = function addTask(taskTitle, taskDueDate) {
 };
 
 TodoApp.prototype.getTaskInfoById = function getTaskInfoById(taskId) {
-  for (let obj of this.allTasks) {
+  const taskIdInt = parseInt(taskId);
+  const found = this.allTasks.find(function findTask(obj) {
     const toObj = Object(obj);
-    const taskIdInt = parseInt(taskId);
-    if (toObj["id"] === taskIdInt) {
-      showSuccessMessage();
-      let taskInfo =
-        "Title: " +
-        toObj["title"] +
-        " with Due Date: " +
-        toObj["dueDate"] +
-        " and finished status: " +
-        toObj["finished"] +
-        "\n";
-      return taskInfo;
-    }
+    return toObj[`id`] === taskIdInt;
+  });
+  if (!found) {
+    throw `Task ID not Found`;
   }
-  throw `Task ID not found!`;
+  showSuccessMessage();
+  let taskInfo =
+    `Title: ` +
+    found[`title`] +
+    ` with Due Date: ` +
+    found[`dueDate`] +
+    ` and finished status: ` +
+    found[`finished`] +
+    `\n`;
+  return taskInfo;
 };
 
 TodoApp.prototype.changeTaskDueDate = function changeTaskDueDate(
   taskId,
   newTaskDueDate,
 ) {
-  /*for (let obj of this.allTasks) {
-    const toObj = Object(obj);
-    const taskIdInt = parseInt(taskId);
-    if (toObj["id"] === taskIdInt) {
-      toObj["dueDate"] = newTaskDueDate;
-      break;
-    }
-  }*/
+  const taskIdInt = parseInt(taskId);
   const found = this.allTasks.find(function findTask(obj) {
     const toObj = Object(obj);
-    const taskIdInt = parseInt(taskId);
-    return toObj["id"] === taskIdInt;
+    return toObj[`id`] === taskIdInt;
   });
+  if (!found) {
+    throw `Task ID not Found`;
+  }
   showSuccessMessage();
-  found["dueDate"] = newTaskDueDate;
+  found[`dueDate`] = newTaskDueDate;
 };
 
 TodoApp.prototype.changeTaskStatus = function changeTaskStatus(taskId) {
-  for (let obj of this.allTasks) {
+  const taskIdInt = parseInt(taskId);
+  const found = this.allTasks.find(function findTask(obj) {
     const toObj = Object(obj);
-    const taskIdInt = parseInt(taskId);
-    if (toObj["id"] === taskIdInt) {
-      /*if (!toObj["finished"]) {
-        toObj["finished"] = true;
-      } else {
-        toObj["finished"] = false;
-      }*/
-      showSuccessMessage();
-      toObj["finished"] = !!(toObj["finished"] ^ 1); //XOR gate alternative (better performance)
-      break;
-    }
+    return toObj[`id`] === taskIdInt;
+  });
+  if (!found) {
+    throw `Task ID not Found`;
   }
+  showSuccessMessage();
+  found[`finished`] = !!(found[`finished`] ^ 1); //XOR gate alternative (better performance)
 };
 
 TodoApp.prototype.removeTaskbyID = function removeTaskbyID(taskId) {
-  let currentTaskIndex = 0;
-  for (let obj of this.allTasks) {
-    const toObj = Object(obj);
-    const taskIdInt = parseInt(taskId);
-    if (toObj["id"] === taskIdInt) {
-      showSuccessMessage();
-      this.allTasks.splice(currentTaskIndex, 1);
-      return;
-    }
+  let currentTaskIndex = -1;
+  const taskIdInt = parseInt(taskId);
+  const found = this.allTasks.find(function findTask(obj) {
     currentTaskIndex = currentTaskIndex + 1;
+    const toObj = Object(obj);
+    return toObj[`id`] === taskIdInt;
+  });
+  if (!found) {
+    throw `Task ID not Found`;
   }
-  throw "Task ID not found!";
+  showSuccessMessage();
+  this.allTasks.splice(currentTaskIndex, 1);
 };
 
 TodoApp.prototype.removeAllTasks = function removeAllTasks() {
@@ -125,17 +122,18 @@ function showMainMenu() {
 }
 
 function showTaskMenu() {
-  console.log(`1. Add a new Task`);
+  console.log(`\n1. Add a new Task`);
   console.log(`2. Get a Task's Info (Title, DueDate, Status)`);
   console.log(`3. Get the info of all the Tasks for this window`);
   console.log(`4. Update Task`);
   console.log(`5. Delete a Task`);
   console.log(`6. Delete all Tasks`);
-  console.log(`7. Exit back to Main Menu\n`);
+  console.log(`7. Get the Number of Tasks`);
+  console.log(`8. Exit back to Main Menu\n`);
 }
 
 function showTaskUpdateOptions() {
-  console.log(`1. Change a Task's due date`);
+  console.log(`\n1. Change a Task's due date`);
   console.log(`2. Toggle a Task's status [finished/unfinished]`);
   console.log(`3. Exit back to Task Operations Menu\n`);
 }
@@ -157,7 +155,7 @@ function getUserTaskMenuChoice() {
   do {
     userInput = prompt(``);
     isValidInput =
-      userInput.match(/^[1-7]$/) !== null ? true : console.log(`Invalid Input`);
+      userInput.match(/^[1-8]$/) !== null ? true : console.log(`Invalid Input`);
   } while (!isValidInput);
   return userInput;
 }
@@ -222,7 +220,14 @@ function performSelectedOperation(userChoiceOfFunction, win1) {
       break;
     case `6`:
       win1.removeAllTasks();
+      break;
     case `7`:
+      const numberOfTasks = win1.taskCount();
+      numberOfTasks !== 1
+        ? console.log(`\nThere are ${numberOfTasks} Tasks in total\n`)
+        : console.log(`\nThere is only 1 Task!\n`);
+      break;
+    case `8`:
       return;
   }
 }
@@ -265,10 +270,11 @@ function readUserDate() {
           showTaskMenu();
           userChoiceOfFunction = getUserTaskMenuChoice();
           performSelectedOperation(userChoiceOfFunction, win1);
-        } while (userChoiceOfFunction !== `7`);
+        } while (userChoiceOfFunction !== `8`);
         break;
       case `2`:
         wantsToLeave = true;
     }
   } while (!wantsToLeave);
 })();
+
