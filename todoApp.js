@@ -1,7 +1,8 @@
 //@ts-check
 ("use strict");
 
-const prompt = require("prompt-sync")();
+const prompt = require(`prompt-sync`)();
+const fs = require(`fs`); //will add file-reading and writting
 
 function TodoApp() {
   this.taskId = 0;
@@ -12,7 +13,7 @@ function TodoApp() {
       showSuccessMessage();
       return this.allTasks.length;
     }
-    throw `Zero values`;
+    throw `No Tasks Found!`;
   };
 }
 
@@ -109,7 +110,7 @@ TodoApp.prototype.getAllTasks = function getAllTasks() {
   return `\nNo Tasks Found\n`;
 };
 
-/*Main function*/
+/*Functions that are outside of the class*/
 function showSuccessMessage() {
   const blue = "\x1b[34m";
   const defaultCmdColor = "\x1b[0m";
@@ -117,7 +118,7 @@ function showSuccessMessage() {
 }
 
 function showMainMenu() {
-  console.log(`1. Open Task Operations Menu`);
+  console.log(`\n1. Open Task Operations Menu`);
   console.log(`2. Exit\n`);
 }
 
@@ -142,7 +143,7 @@ function getUserMainMenuChoice() {
   let userInput;
   let isValidInput = false;
   do {
-    userInput = prompt("");
+    userInput = prompt(``);
     isValidInput =
       userInput.match(/^[1-2]$/) !== null ? true : console.log(`Invalid Input`);
   } while (!isValidInput);
@@ -176,7 +177,7 @@ function performSelectedUpdateOperation(userChoiceOfUpdateFunction, win1) {
   switch (userChoiceOfUpdateFunction) {
     case `1`:
       taskId = prompt(`Give the task ID `);
-      const taskDueDate = validateUserDate();
+      const taskDueDate = validateUserInputForDate();
       win1.changeTaskDueDate(taskId, taskDueDate);
       break;
     case `2`:
@@ -192,10 +193,11 @@ function performSelectedOperation(userChoiceOfFunction, win1) {
   let taskId;
   let userChoiceOfUpdateFunction;
   let exitChoiceNumber = `3`;
+  console.log(`\n`);
   switch (userChoiceOfFunction) {
     case `1`:
       const taskTitle = prompt(`Please add the Title of the task `);
-      const taskDueDate = validateUserDate();
+      const taskDueDate = validateUserInputForDate();
       win1.addTask(taskTitle, taskDueDate);
       break;
     case `2`:
@@ -232,29 +234,63 @@ function performSelectedOperation(userChoiceOfFunction, win1) {
   }
 }
 
-function validateUserDate() {
-  /*NEEDS FIXING*/
+function validateUserInputForDate() {
   let taskDueDate;
+  let isValidInput = false;
   let isValidDate = false;
   do {
     taskDueDate = readUserDate();
-    const secondLastCharacterOfDate = taskDueDate.slice(-2, -1);
-    const lastCharacterOfDate = taskDueDate.slice(-1);
-    const intLastCharacterOfDate = parseInt(lastCharacterOfDate);
-    isValidDate =
+    isValidInput =
       taskDueDate.match(
-        /^[1-9][0-9]?[-|/| ][1-9][0-2]?[-|/| ][2][0][2-9][0-9]$/,
-      ) !== null &&
-      (secondLastCharacterOfDate !== `2` || intLastCharacterOfDate > 5)
-        ? true
-        : console.log(`Invalid Input`);
-  } while (!isValidDate);
+        /^[0-3]((?<=[3])[0,1]|(?<![3|0])[0-9]|(?<=[0])[1-9])[/|-| ][0,1]((?<=[0])[1-9]|(?<=[1])[0-2])[/|-| ][2][0][2-9]((?<=[2])[5-9]|(?<![2])[0-9])$/g,
+      ) !== null
+        ? (isValidDate = validateUserDate(taskDueDate))
+        : console.log(`Invalid Date Format!`);
+  } while (!isValidInput || !isValidDate);
   return taskDueDate;
 }
 
+function validateUserDate(taskDueDate) {
+  const [userDayToInt, userMonthToInt, userYearToInt] =
+    breakUserDateByParts(taskDueDate);
+  const userDateObj = new Date(userYearToInt, userMonthToInt, userDayToInt);
+  const dateIsValid =
+    userDateObj.getDate() === userDayToInt &&
+    userDateObj.getMonth() === userMonthToInt;
+  const todayDateObj = new Date(); //Get Current Date
+  const dateIsInTheFuture = todayDateObj < userDateObj && dateIsValid;
+  if (dateIsInTheFuture) {
+    return true;
+  }
+  console.log(`\nThe Due Date cannot be in the past or the present`);
+  return false;
+}
+
+function breakUserDateByParts(taskDueDate) {
+  const userDateByParts = [];
+  userDateByParts.push(taskDueDate.slice(0, 2));
+  userDateByParts.push(taskDueDate.slice(3, 5));
+  userDateByParts.push(taskDueDate.slice(6, 10));
+  const userDayToInt = parseInt(userDateByParts[0]);
+  const userMonthToInt = parseInt(userDateByParts[1]) - 1; //Needs to be -1 because the getDate Method returns a day before the one the user wants
+  const userYearToInt = parseInt(userDateByParts[2]);
+  return [userDayToInt, userMonthToInt, userYearToInt]; //Sorry if it's a bit bakaliko
+}
+
 function readUserDate() {
-  const taskDueDate = prompt(`Please add its due date `);
+  const taskDueDate = prompt(
+    `Please add its due date in Format: Day/Month/Year {ex: 27/07/2026} `,
+  );
   return taskDueDate;
+}
+
+function selectTaskOperation(win1) {
+  let userChoiceOfFunction;
+  do {
+    showTaskMenu();
+    userChoiceOfFunction = getUserTaskMenuChoice();
+    performSelectedOperation(userChoiceOfFunction, win1);
+  } while (userChoiceOfFunction !== `8`);
 }
 
 (function main() {
@@ -266,11 +302,7 @@ function readUserDate() {
     userChoiceOfFunction = getUserMainMenuChoice();
     switch (userChoiceOfFunction) {
       case `1`:
-        do {
-          showTaskMenu();
-          userChoiceOfFunction = getUserTaskMenuChoice();
-          performSelectedOperation(userChoiceOfFunction, win1);
-        } while (userChoiceOfFunction !== `8`);
+        selectTaskOperation(win1);
         break;
       case `2`:
         wantsToLeave = true;
