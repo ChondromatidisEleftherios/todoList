@@ -63,11 +63,12 @@ TODO 6/10
 4) FIX BUGS (INPUT VALIDATION)
 
 TODO 7/10
-1) Fix date validation (find a way to do only dates later than the one you're rn). Either make a good regex (look at regex 101 guides), or try playing with the date object.
+1) Fix date validation (find a way to do only dates later than the one you're rn). Either make a good regex (look at regex 101 guides), or try playing with the date object. OK
 2) FIX BUGS (INPUT VALIDATION)
-3) In the main Function, make one more function for the sub-menu (so there's less nesting)
+3) In the main Function, make one more function for the sub-menu (so there's less nesting) OK
 
 TODO 9/10
 1) Clean Code
 2) Check for any remaining bugs
 3) Add file saving.
+
