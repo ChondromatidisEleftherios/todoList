@@ -2,7 +2,7 @@
 ("use strict");
 
 const prompt = require(`prompt-sync`)();
-const fs = require(`fs`); //will add file-reading and writting
+const fs = require(`fs`);
 
 function TodoApp() {
   this.taskId = 0;
