@@ -73,7 +73,8 @@ TODO 9/10
 3) Clean Code
 
 TODO 9/10 EXTENDED
-1) Fix the bug with the ID's (make a .txt file that always contains the last Task ID)
+1) Fix the bug with the ID's (make a .txt file that always contains the last Task ID) OK
 2) Check for any remaining bugs
 3) Clean Code
+
 
