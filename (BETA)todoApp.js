@@ -18,7 +18,8 @@ function TodoApp() {
 }
 
 TodoApp.prototype.addTask = function addTask(taskTitle, taskDueDate) {
-  const ids = (this.taskId = this.taskId + 1);
+  const lastSavedTaskId = this.getTheLastTaskId();
+  const ids = (this.taskId = lastSavedTaskId + 1);
   const taskObj = {
     id: ids,
     title: taskTitle,
@@ -27,6 +28,7 @@ TodoApp.prototype.addTask = function addTask(taskTitle, taskDueDate) {
   };
   this.allTasks.push(taskObj);
   this.appendTaskToFile();
+  this.saveTheLastTaskId();
   showSuccessMessage();
   console.log(`Task ID: ${ids} \n`);
 };
@@ -101,6 +103,7 @@ TodoApp.prototype.removeTaskbyID = function removeTaskbyID(taskId) {
 
 TodoApp.prototype.removeAllTasks = function removeAllTasks() {
   this.deleteTasksFile();
+  this.deleteTheLastTaskId();
   this.allTasks.length = 0;
   showSuccessMessage();
 };
@@ -142,6 +145,34 @@ TodoApp.prototype.deleteTasksFile = function deleteTasksFile() {
     fs.unlinkSync(`userTasks.json`);
   } catch (err) {
     throw `The file with the Tasks does not Exist!`;
+  }
+};
+
+TodoApp.prototype.saveTheLastTaskId = function saveTheLastTaskId() {
+  const lastTaskId = this.allTasks[this.allTasks.length - 1][`id`];
+  try {
+    fs.writeFileSync(`lastTaskId.txt`, lastTaskId.toString(), `utf-8`);
+  } catch (err) {
+    fs.appendFileSync(`lastTaskId.txt`, lastTaskId.toString(), `utf-8`);
+  }
+};
+
+TodoApp.prototype.getTheLastTaskId = function getTheLastTaskId() {
+  try {
+    const lastTaskIdStr = fs.readFileSync(`lastTaskId.txt`, `utf-8`);
+    const lastTaskIdInt = parseInt(lastTaskIdStr);
+    return lastTaskIdInt;
+  } catch (err) {
+    fs.appendFileSync(`lastTaskId.txt`, `0`, `utf-8`);
+    return 0;
+  }
+};
+
+TodoApp.prototype.deleteTheLastTaskId = function deleteTheLastTaskId() {
+  try {
+    fs.unlinkSync(`lastTaskId.txt`);
+  } catch (err) {
+    throw `No file containing the last Task ID found!`;
   }
 };
 
@@ -345,3 +376,4 @@ function selectTaskOperation(win1) {
     }
   } while (!wantsToLeave);
 })();
+
