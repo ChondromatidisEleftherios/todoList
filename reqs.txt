@@ -68,9 +68,12 @@ TODO 7/10
 3) In the main Function, make one more function for the sub-menu (so there's less nesting) OK
 
 TODO 9/10
-1) Add file saving and reading
+1) Add file saving and reading OK
 2) Check for any remaining bugs
 3) Clean Code
-4) Try with 2 classes?
 
+TODO 9/10 EXTENDED
+1) Fix the bug with the ID's (make a .txt file that always contains the last Task ID)
+2) Check for any remaining bugs
+3) Clean Code
 
