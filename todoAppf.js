@@ -11,7 +11,7 @@ function TodoApp() {
     const totalTasks = this.allTasks.length;
     if (totalTasks !== 0) {
       showSuccessMessage();
-      return this.allTasks.length;
+      return totalTasks;
     }
     throw `No Tasks Found!`;
   };
