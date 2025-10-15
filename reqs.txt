@@ -77,4 +77,15 @@ TODO 9/10 EXTENDED
 2) Check for any remaining bugs
 3) Clean Code
 
+Todo 16/10
+1) Make the App Multiton: On the main menu, add 2 new options: A) Have the user make a new TodoListApp with a name of their choice 2)Select a todoList by name. 
+For the first option, I will have the user type a name, will check if it's null/empty and if not, it will make a new file with that name + Tasks. Ex: work -> workTasks.json.
+For the last id, it will have the name + LastId. Ex: work -> workLastId.txt.
+Lastly, a special file named `TodoApps.txt` will be updated with the name the user inserted. It will basically contain an Array with all the TodoApps the user has created. Ex: [`work`,  `home`, `college`]
 
+As for the second option, the special file (todoApps.txt) will be read with a for..of loop, after the user has inserted a name. If found, the object will be made (new TodoApp()) and all the required iles will be read.
+The users will have the option to switch to an other TodoApp() if they desire to. Lastly, the name of the todoApp will be passed as an arguement to the constructor. Ex: new TodoApp(`work`);
+
+FOR BOTH, there will be an option for the user to delete a ToDoApp() by giving its name.
+
+2) Check for bugs and make the code as clean as possible.
