@@ -3,7 +3,7 @@
 
 import * as fs from "fs";
 import promptSync from "prompt-sync";
-
+ 
 const prompt = promptSync();
 
 export function showSuccessMessage() {
@@ -274,3 +274,4 @@ export function selectWorkSpace(workSpaceArray) {
   const selectedWorkSpace = getUserWorkSpaceChoice(workSpaceArray);
   return selectedWorkSpace;
 }
+
