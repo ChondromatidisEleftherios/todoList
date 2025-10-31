@@ -4,9 +4,10 @@
 import * as fs from "fs";
 import promptSync from "prompt-sync";
 
+const prompt = promptSync();
+
 import * as todoAppUtils from "./todoAppUtils.js";
 
-const prompt = promptSync();
 
 function TodoApp(workSpaceName) {
   this.workSpaceName = workSpaceName;
@@ -205,5 +206,6 @@ TodoApp.prototype.constructLastIdFileName = function constructLastIdFileName() {
   const workSpaceLastIdFileName = `lastIdFor` + this.workSpaceName + `.txt`;
   return workSpaceLastIdFileName;
 };
+
 
 export { TodoApp };
